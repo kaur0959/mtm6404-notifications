@@ -1,34 +1,49 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import React, { useState } from 'react';
+import notificationsData from './notifications';
+import './App.css';
 
-function App() {
-  const [count, setCount] = useState(0)
+const Notification = ({ notification, clearNotification }) => (
+  <div className="card mb-3">
+    <div className="card-body">
+      <h5 className="card-title">{notification.name}</h5>
+      <p className="card-text">{notification.message}</p>
+      <button className="btn btn-danger" onClick={() => clearNotification(notification.id)}>Clear</button>
+    </div>
+  </div>
+);
+
+const NotificationList = ({ children }) => (
+  <div className="notification-list">
+    {children}
+  </div>
+);
+
+const App = () => {
+  const [notifications, setNotifications] = useState(notificationsData);
+
+  const clearNotification = (id) => {
+    setNotifications(notifications.filter(notification => notification.id !== id));
+  };
+
+  const clearAllNotifications = () => {
+    setNotifications([]);
+  };
 
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+    <div className="app container mt-5">
+      <h1>Notifications ({notifications.length})</h1>
+      <button className="btn btn-warning mb-3" onClick={clearAllNotifications}>Clear All</button>
+      <NotificationList>
+        {notifications.map(notification => (
+          <Notification 
+            key={notification.id} 
+            notification={notification} 
+            clearNotification={clearNotification} 
+          />
+        ))}
+      </NotificationList>
     </div>
-  )
-}
+ );
+};
 
-export default App
+export default App;
